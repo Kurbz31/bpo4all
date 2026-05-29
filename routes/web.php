@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:Super Admin,Team Leader,HR Manager')->group(function () {
         Route::resource('campaigns', CampaignController::class);
+        Route::get('campaigns/{campaign}/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('campaigns.attendance.index');
+        Route::get('campaigns/{campaign}/attendance/create', [\App\Http\Controllers\AttendanceController::class, 'create'])->name('campaigns.attendance.create');
+        Route::post('campaigns/{campaign}/attendance', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('campaigns.attendance.store');
         Route::get('employees/terminated', [EmployeeController::class, 'terminated'])->name('employees.terminated');
         Route::resource('employees', EmployeeController::class);
     });

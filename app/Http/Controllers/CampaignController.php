@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CampaignController extends Controller
 {
@@ -39,6 +40,8 @@ class CampaignController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'hours_of_work' => 'nullable|numeric|min:0',
+            'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);
@@ -46,6 +49,8 @@ class CampaignController extends Controller
         $campaign = Campaign::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
+            'hours_of_work' => $validated['hours_of_work'] ?? null,
+            'attendance_method' => $validated['attendance_method'],
         ]);
 
         if (!empty($validated['user_ids'])) {
@@ -80,6 +85,8 @@ class CampaignController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'hours_of_work' => 'nullable|numeric|min:0',
+            'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);
@@ -87,6 +94,8 @@ class CampaignController extends Controller
         $campaign->update([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
+            'hours_of_work' => $validated['hours_of_work'] ?? null,
+            'attendance_method' => $validated['attendance_method'],
         ]);
 
         if (isset($validated['user_ids'])) {

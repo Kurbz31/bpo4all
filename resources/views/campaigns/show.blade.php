@@ -5,9 +5,26 @@
                 {{ $campaign->name }}
             </h2>
 
-            @if(Auth::user()->role !== 'Team Leader')
-            <a href="{{ route('campaigns.edit', $campaign) }}" class="text-sm text-indigo-600 hover:text-indigo-900">Edit Campaign</a>
-            @endif
+            <div class="flex items-center space-x-4">
+                @php
+                    $user = Auth::user();
+                    $canCreateAttendance = false;
+                    if ($user->role === 'HR Manager' || $user->role === 'Super Admin') {
+                        $canCreateAttendance = true;
+                    }
+                    if ($user->role === 'Team Leader' && $campaign->users->contains('id', $user->id)) {
+                        $canCreateAttendance = true;
+                    }
+                @endphp
+
+                @if($canCreateAttendance)
+                    <a href="{{ route('campaigns.attendance.create', $campaign) }}" class="text-sm text-indigo-600 hover:text-indigo-900">Create Attendance</a>
+                @endif
+
+                @if(Auth::user()->role !== 'Team Leader')
+                <a href="{{ route('campaigns.edit', $campaign) }}" class="text-sm text-indigo-600 hover:text-indigo-900">Edit Campaign</a>
+                @endif
+            </div>
         </div>
     </x-slot>
 
@@ -16,8 +33,10 @@
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 space-y-3">
                     <p><strong>Description:</strong> {{ $campaign->description ?: 'No description provided.' }}</p>
+                    <p><strong>Hours of Work:</strong> {{ $campaign->hours_of_work ?? 'Not set' }}</p>
+                    <p><strong>Attendance Method:</strong> {{ $campaign->attendanceMethodLabel() }}</p>
                     <p><strong>Agents (Employees):</strong> {{ $campaign->employees->count() }}</p>
-                    <p><strong>Assigned Leaders & HR:</strong> {{ $campaign->users->count() }}</p>
+                    
                 </div>
             </div>
 
