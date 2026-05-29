@@ -29,6 +29,9 @@ Route::middleware('auth')->group(function () {
         Route::get('campaigns/{campaign}/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('campaigns.attendance.index');
         Route::get('campaigns/{campaign}/attendance/create', [\App\Http\Controllers\AttendanceController::class, 'create'])->name('campaigns.attendance.create');
         Route::post('campaigns/{campaign}/attendance', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('campaigns.attendance.store');
+        Route::get('campaigns/{campaign}/attendance/{attendance}', [\App\Http\Controllers\AttendanceController::class, 'show'])->name('campaigns.attendance.show');
+        Route::get('campaigns/{campaign}/attendance/{attendance}/edit', [\App\Http\Controllers\AttendanceController::class, 'edit'])->name('campaigns.attendance.edit');
+        Route::put('campaigns/{campaign}/attendance/{attendance}', [\App\Http\Controllers\AttendanceController::class, 'update'])->name('campaigns.attendance.update');
         Route::get('employees/terminated', [EmployeeController::class, 'terminated'])->name('employees.terminated');
         Route::resource('employees', EmployeeController::class);
     });
