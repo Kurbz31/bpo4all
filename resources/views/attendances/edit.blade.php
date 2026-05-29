@@ -84,10 +84,10 @@
                                                 </td>
                                                 @if($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME)
                                                     <td class="px-4 py-3">
-                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][call_time]" value="{{ old('targets.'.$employee->id.'.call_time', $savedCallTime) }}" class="w-full" placeholder="7.5" />
+                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][call_time]" value="{{ old('targets.'.$employee->id.'.call_time', $savedCallTime) }}" class="w-full call-time-input" data-emp-id="{{ $employee->id }}" placeholder="7.5" />
                                                     </td>
                                                     <td class="px-4 py-3">
-                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][daily_salary]" value="{{ old('targets.'.$employee->id.'.daily_salary', $savedSalary) }}" class="w-full" placeholder="500" />
+                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][daily_salary]" value="{{ old('targets.'.$employee->id.'.daily_salary', $savedSalary) }}" class="w-full daily-salary-input" data-emp-id="{{ $employee->id }}" placeholder="500" />
                                                     </td>
                                                 @endif
                                             </tr>
@@ -106,4 +106,35 @@
             </div>
         </div>
     </div>
+
+    @if($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const minCallTime = {{ $campaign->minimum_call_time ?? 'null' }};
+            const defaultSalary = {{ $campaign->daily_salary ?? 'null' }};
+
+            if (minCallTime !== null && defaultSalary !== null) {
+                const callTimeInputs = document.querySelectorAll('.call-time-input');
+                
+                callTimeInputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        const empId = this.getAttribute('data-emp-id');
+                        const salaryInput = document.querySelector(`.daily-salary-input[data-emp-id="${empId}"]`);
+                        
+                        if (salaryInput) {
+                            const val = parseFloat(this.value);
+                            // Set the default salary if their call time is equal or greater than the minimum
+                            if (!isNaN(val) && val >= parseFloat(minCallTime)) {
+                                salaryInput.value = defaultSalary;
+                            } else if (!isNaN(val) && val < parseFloat(minCallTime)) {
+                                // Optional: Clear it if they drop below the minimum
+                                salaryInput.value = '';
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    @endif
 </x-app-layout>
