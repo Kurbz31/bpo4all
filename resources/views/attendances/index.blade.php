@@ -28,53 +28,13 @@
                                             @if($attendance->target_role)
                                                 <div class="text-xs text-gray-600">Target Role: {{ $attendance->target_role }}</div>
                                             @endif
+                                            <div class="text-xs text-gray-500 mt-1">Created: {{ $attendance->created_at->diffForHumans() }}</div>
                                         </div>
-                                        <div class="text-sm text-gray-600">Created: {{ $attendance->created_at->diffForHumans() }}</div>
+                                        <div class="flex gap-2">
+                                            <a href="{{ route('campaigns.attendance.show', [$campaign, $attendance]) }}" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full hover:bg-indigo-100 transition">View</a>
+                                            <a href="{{ route('campaigns.attendance.edit', [$campaign, $attendance]) }}" class="px-3 py-1 bg-amber-50 text-yellow-700 text-sm rounded-full hover:bg-yellow-100 transition">Edit</a>
+                                        </div>
                                     </div>
-
-                                    @if($attendance->targets)
-                                        <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                            @if(isset($attendance->targets['employees']) && is_array($attendance->targets['employees']))
-                                                @foreach($attendance->targets['employees'] as $empId => $statusData)
-                                                    @php 
-                                                        $employee = $campaign->employees->firstWhere('id', $empId); 
-                                                        $statusValue = is_array($statusData) ? ($statusData['status'] ?? '') : $statusData;
-                                                        $callTime = is_array($statusData) ? ($statusData['call_time'] ?? null) : null;
-                                                        $dailySalary = is_array($statusData) ? ($statusData['daily_salary'] ?? null) : null;
-                                                    @endphp
-                                                    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                                                        <div class="font-medium text-sm text-gray-900 border-b pb-2 mb-2">{{ $employee?->name ?? "Employee #{$empId}" }}</div>
-                                                        <div class="space-y-1">
-                                                            <div class="text-xs text-gray-600">
-                                                                <span class="font-semibold text-gray-500">Status:</span> 
-                                                                <span class="uppercase {{ $statusValue === 'present' ? 'text-green-600' : ($statusValue === 'absent' ? 'text-red-500' : 'text-gray-800') }}">{{ $statusValue ?: '—' }}</span>
-                                                            </div>
-                                                            @if($callTime !== null)
-                                                                <div class="text-xs text-gray-600">
-                                                                    <span class="font-semibold text-gray-500">Call Time:</span> {{ $callTime }} hrs
-                                                                </div>
-                                                            @endif
-                                                            @if($dailySalary !== null)
-                                                                <div class="text-xs text-gray-600">
-                                                                    <span class="font-semibold text-gray-500">Daily Salary:</span> ₱{{ number_format((float)$dailySalary, 2) }}
-                                                                </div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endif
-
-                                            @if(isset($attendance->targets['users']) && is_array($attendance->targets['users']))
-                                                @foreach($attendance->targets['users'] as $uId)
-                                                    @php $user = \App\Models\User::find($uId); @endphp
-                                                    <div class="p-2 bg-white border rounded">
-                                                        <div class="font-medium text-sm">{{ $user?->name ?? "User #{$uId}" }}</div>
-                                                        <div class="text-xs text-gray-600">Role: {{ $user?->role ?? '—' }}</div>
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                        </div>
-                                    @endif
                                 </div>
                             @endforeach
 

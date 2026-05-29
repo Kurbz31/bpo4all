@@ -105,4 +105,94 @@ class AttendanceController extends Controller
 
         return redirect()->route('campaigns.show', $campaign)->with('success', 'Attendance record created.');
     }
+
+    public function show(Campaign $campaign, Attendance $attendance)
+    {
+        $user = auth()->user();
+
+        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($user->role === 'Team Leader' && ! $campaign->users()->where('users.id', $user->id)->exists()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $employees = $campaign->employees;
+        return view('attendances.show', compact('campaign', 'attendance', 'employees'));
+    }
+
+    public function edit(Campaign $campaign, Attendance $attendance)
+    {
+        $user = auth()->user();
+
+        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($user->role === 'Team Leader' && ! $campaign->users()->where('users.id', $user->id)->exists()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $employees = $campaign->employees;
+        return view('attendances.edit', compact('campaign', 'attendance', 'employees'));
+    }
+
+    public function update(Request $request, Campaign $campaign, Attendance $attendance)
+    {
+        $user = auth()->user();
+
+        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($user->role === 'Team Leader' && ! $campaign->users()->where('users.id', $user->id)->exists()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $rules = [
+            'date' => 'required|date',
+            'notes' => 'nullable|string',
+            'targets' => 'nullable|array',
+        ];
+
+        if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
+            $rules['targets.*.status'] = 'nullable|in:present,absent,late,leave';
+            $rules['targets.*.call_time'] = 'nullable|numeric|min:0';
+            $rules['targets.*.daily_salary'] = 'nullable|numeric|min:0';
+        } else {
+            $rules['targets.*'] = 'nullable|in:present,absent,late,leave';
+        }
+
+        $validated = $request->validate($rules);
+
+        $filteredTargets = [];
+        if (! empty($validated['targets'])) {
+            if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
+                foreach ($validated['targets'] as $id => $data) {
+                    if (!empty($data['status']) || is_numeric($data['call_time']) || is_numeric($data['daily_salary'])) {
+                        $filteredTargets[$id] = [
+                            'status' => $data['status'] ?? null,
+                            'call_time' => $data['call_time'] ?? null,
+                            'daily_salary' => $data['daily_salary'] ?? null,
+                        ];
+                    }
+                }
+            } else {
+                foreach ($validated['targets'] as $id => $status) {
+                    if (!empty($status)) {
+                        $filteredTargets[$id] = $status;
+                    }
+                }
+            }
+        }
+
+        $attendance->update([
+            'targets' => ! empty($filteredTargets) ? ['employees' => $filteredTargets] : null,
+            'date' => $validated['date'],
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        return redirect()->route('campaigns.attendance.index', $campaign)->with('success', 'Attendance record updated.');
+    }
 }
