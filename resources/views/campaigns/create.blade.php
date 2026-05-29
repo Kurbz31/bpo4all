@@ -33,13 +33,27 @@
                         <div>
                             <x-input-label for="attendance_method" :value="__('Attendance Method')" />
                             @php($attendanceMethodOptions = \App\Models\Campaign::attendanceMethodOptions())
-                            <select id="attendance_method" name="attendance_method" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <select id="attendance_method" name="attendance_method" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required onchange="toggleCallTimeFields()">
                                 <option value="" disabled {{ old('attendance_method') ? '' : 'selected' }}>Select an attendance method...</option>
                                 @foreach($attendanceMethodOptions as $value => $label)
                                     <option value="{{ $value }}" @selected(old('attendance_method') === $value)>{{ $label }}</option>
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('attendance_method')" class="mt-2" />
+                        </div>
+
+                        <div id="call_time_fields" style="display: {{ old('attendance_method') === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'block' : 'none' }};" class="p-4 border rounded-md bg-gray-50 space-y-4">
+                            <div>
+                                <x-input-label for="minimum_call_time" :value="__('Minimum Call Time (hours)')" />
+                                <x-text-input id="minimum_call_time" class="block mt-1 w-full" type="number" name="minimum_call_time" step="0.01" min="0" :value="old('minimum_call_time')" />
+                                <x-input-error :messages="$errors->get('minimum_call_time')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="daily_salary" :value="__('Daily Salary')" />
+                                <x-text-input id="daily_salary" class="block mt-1 w-full" type="number" name="daily_salary" step="0.01" min="0" :value="old('daily_salary')" />
+                                <x-input-error :messages="$errors->get('daily_salary')" class="mt-2" />
+                            </div>
                         </div>
 
                         <div>
@@ -66,4 +80,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleCallTimeFields() {
+            const method = document.getElementById('attendance_method').value;
+            const fields = document.getElementById('call_time_fields');
+            if (method === '{{ \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME }}') {
+                fields.style.display = 'block';
+                document.getElementById('minimum_call_time').required = true;
+                document.getElementById('daily_salary').required = true;
+            } else {
+                fields.style.display = 'none';
+                document.getElementById('minimum_call_time').required = false;
+                document.getElementById('daily_salary').required = false;
+                document.getElementById('minimum_call_time').value = '';
+                document.getElementById('daily_salary').value = '';
+            }
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', toggleCallTimeFields);
+    </script>
 </x-app-layout>

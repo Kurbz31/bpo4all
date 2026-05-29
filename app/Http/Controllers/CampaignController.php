@@ -42,6 +42,8 @@ class CampaignController extends Controller
             'description' => 'nullable|string',
             'hours_of_work' => 'nullable|numeric|min:0',
             'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
+            'minimum_call_time' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
+            'daily_salary' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);
@@ -51,6 +53,8 @@ class CampaignController extends Controller
             'description' => $validated['description'] ?? null,
             'hours_of_work' => $validated['hours_of_work'] ?? null,
             'attendance_method' => $validated['attendance_method'],
+            'minimum_call_time' => $validated['minimum_call_time'] ?? null,
+            'daily_salary' => $validated['daily_salary'] ?? null,
         ]);
 
         if (!empty($validated['user_ids'])) {
@@ -87,6 +91,8 @@ class CampaignController extends Controller
             'description' => 'nullable|string',
             'hours_of_work' => 'nullable|numeric|min:0',
             'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
+            'minimum_call_time' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
+            'daily_salary' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);
@@ -96,6 +102,8 @@ class CampaignController extends Controller
             'description' => $validated['description'] ?? null,
             'hours_of_work' => $validated['hours_of_work'] ?? null,
             'attendance_method' => $validated['attendance_method'],
+            'minimum_call_time' => $validated['minimum_call_time'] ?? null,
+            'daily_salary' => $validated['daily_salary'] ?? null,
         ]);
 
         if (isset($validated['user_ids'])) {

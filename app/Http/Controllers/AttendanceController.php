@@ -52,7 +52,11 @@ class AttendanceController extends Controller
         }
 
         $rules = [
-            'date' => 'required|date',
+            'date' => [
+                'required',
+                'date',
+                \Illuminate\Validation\Rule::unique('attendances')->where(fn ($query) => $query->where('campaign_id', $campaign->id))
+            ],
             'notes' => 'nullable|string',
             'targets' => 'nullable|array',
         ];
@@ -65,7 +69,9 @@ class AttendanceController extends Controller
             $rules['targets.*'] = 'nullable|in:present,absent,late,leave';
         }
 
-        $validated = $request->validate($rules);
+        $validated = $request->validate($rules, [
+            'date.unique' => 'An attendance record for this date already exists for this campaign.'
+        ]);
 
         // For team leaders, ensure they are assigned to the campaign
         if ($user->role === 'Team Leader') {
@@ -151,7 +157,11 @@ class AttendanceController extends Controller
         }
 
         $rules = [
-            'date' => 'required|date',
+            'date' => [
+                'required',
+                'date',
+                \Illuminate\Validation\Rule::unique('attendances')->where(fn ($query) => $query->where('campaign_id', $campaign->id))->ignore($attendance->id)
+            ],
             'notes' => 'nullable|string',
             'targets' => 'nullable|array',
         ];
@@ -164,7 +174,9 @@ class AttendanceController extends Controller
             $rules['targets.*'] = 'nullable|in:present,absent,late,leave';
         }
 
-        $validated = $request->validate($rules);
+        $validated = $request->validate($rules, [
+            'date.unique' => 'An attendance record for this date already exists for this campaign.'
+        ]);
 
         $filteredTargets = [];
         if (! empty($validated['targets'])) {

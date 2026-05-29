@@ -9,7 +9,7 @@ class Campaign extends Model
     public const ATTENDANCE_METHOD_CALL_TIME = 'call_time';
     public const ATTENDANCE_METHOD_PRESENT_ABSENT = 'present_absent';
 
-    protected $fillable = ['name', 'description', 'hours_of_work', 'attendance_method'];
+    protected $fillable = ['name', 'description', 'hours_of_work', 'attendance_method', 'minimum_call_time', 'daily_salary'];
 
     public static function attendanceMethodOptions(): array
     {
