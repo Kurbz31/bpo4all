@@ -22,7 +22,7 @@
                         </x-nav-link>
                     @endif
 
-                    @if(in_array(Auth::user()->role, ['Super Admin', 'Team Leader', 'HR Manager']))
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Team Leader', 'HR Manager', 'CEO']))
                         <x-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.*')">
                             {{ __('Campaigns') }}
                         </x-nav-link>
@@ -92,7 +92,7 @@
                 </x-responsive-nav-link>
             @endif
 
-            @if(in_array(Auth::user()->role, ['Super Admin', 'Team Leader', 'HR Manager']))
+            @if(in_array(Auth::user()->role, ['Super Admin', 'Team Leader', 'HR Manager', 'CEO']))
                 <x-responsive-nav-link :href="route('campaigns.index')" :active="request()->routeIs('campaigns.*')">
                     {{ __('Campaigns') }}
                 </x-responsive-nav-link>

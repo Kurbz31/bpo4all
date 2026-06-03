@@ -76,16 +76,16 @@
                                             </a>
                                             @php
                                                 $user = Auth::user();
-                                                $canCreateAttendance = false;
-                                                if (in_array($user->role, ['HR Manager', 'Super Admin'])) {
-                                                    $canCreateAttendance = true;
+                                                $canViewAttendance = false;
+                                                if (in_array($user->role, ['HR Manager', 'Super Admin', 'CEO'])) {
+                                                    $canViewAttendance = true;
                                                 }
                                                 if ($user->role === 'Team Leader' && $campaign->users->contains('id', $user->id)) {
-                                                    $canCreateAttendance = true;
+                                                    $canViewAttendance = true;
                                                 }
                                             @endphp
 
-                                            @if($canCreateAttendance)
+                                            @if($canViewAttendance)
                                                 <a href="{{ route('campaigns.attendance.index', $campaign) }}" class="inline-flex p-2 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-100 transition shadow-sm" title="Attendance Records">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
@@ -93,7 +93,7 @@
                                                 </a>
                                             @endif
 
-                                            @if(Auth::user()->role !== 'Team Leader')
+                                            @if(!in_array(Auth::user()->role, ['Team Leader', 'CEO']))
                                                 <a href="{{ route('campaigns.edit', $campaign) }}" class="inline-flex p-2 bg-amber-50 border border-amber-100 text-amber-600 rounded-lg hover:bg-amber-100 transition shadow-sm" title="Edit Campaign">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>

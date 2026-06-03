@@ -52,6 +52,10 @@ class EmployeeController extends Controller
 
     public function create()
     {
+        if (auth()->user()->role === 'CEO') {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (auth()->user()->role === 'Team Leader') {
             $campaigns = auth()->user()->campaigns;
         } else {
@@ -63,6 +67,10 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role === 'CEO') {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'campaign_id' => 'required|exists:campaigns,id',
@@ -86,6 +94,10 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee)
     {
+        if (auth()->user()->role === 'CEO') {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (auth()->user()->role === 'Team Leader') {
             if (!auth()->user()->campaigns()->where('campaigns.id', $employee->campaign_id)->exists()) {
                 abort(403, 'Unauthorized. Agent belongs to a different campaign.');
@@ -100,6 +112,9 @@ class EmployeeController extends Controller
 
     public function update(Request $request, Employee $employee)
     {
+        if (auth()->user()->role === 'CEO') {
+            abort(403, 'Unauthorized action.');
+        }
         if (auth()->user()->role === 'Team Leader') {
             if (!auth()->user()->campaigns()->where('campaigns.id', $employee->campaign_id)->exists()) {
                 abort(403, 'Unauthorized. Agent belongs to a different campaign.');
@@ -129,6 +144,10 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee)
     {
+        if (auth()->user()->role === 'CEO') {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (auth()->user()->role === 'Team Leader') {
             if (!auth()->user()->campaigns()->where('campaigns.id', $employee->campaign_id)->exists()) {
                 abort(403, 'Unauthorized. Agent belongs to a different campaign.');

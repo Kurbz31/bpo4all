@@ -29,12 +29,12 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
 
-        // Allow if team leader assigned to campaign or HR/Super Admin
+        // Allow if team leader assigned to campaign or HR/Super Admin/CEO
         if ($user->role === 'Team Leader' && ! $campaign->users()->where('users.id', $user->id)->exists()) {
             abort(403, 'Unauthorized action.');
         }
 
-        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin'])) {
+        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -116,7 +116,7 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
 
-        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin'])) {
+        if (! in_array($user->role, ['Team Leader', 'HR Manager', 'Super Admin', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 
