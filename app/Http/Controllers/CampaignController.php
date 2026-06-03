@@ -30,7 +30,7 @@ class CampaignController extends Controller
 
     public function create()
     {
-        if (auth()->user()->role === 'Team Leader') {
+        if (in_array(auth()->user()->role, ['Team Leader', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -40,7 +40,7 @@ class CampaignController extends Controller
 
     public function store(Request $request)
     {
-        if (auth()->user()->role === 'Team Leader') {
+        if (in_array(auth()->user()->role, ['Team Leader', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -79,7 +79,7 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
-        if (auth()->user()->role === 'Team Leader') {
+        if (in_array(auth()->user()->role, ['Team Leader', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -89,6 +89,9 @@ class CampaignController extends Controller
 
     public function update(Request $request, Campaign $campaign)
     {
+        if (in_array(auth()->user()->role, ['Team Leader', 'CEO'])) {
+            abort(403, 'Unauthorized action.');
+        }
         if (auth()->user()->role === 'Team Leader') {
             abort(403, 'Unauthorized action.');
         }
@@ -124,7 +127,7 @@ class CampaignController extends Controller
 
     public function destroy(Campaign $campaign)
     {
-        if (auth()->user()->role === 'Team Leader') {
+        if (in_array(auth()->user()->role, ['Team Leader', 'CEO'])) {
             abort(403, 'Unauthorized action.');
         }
 

@@ -26,6 +26,7 @@ class DashboardController extends Controller
         } elseif ($user->role === 'CEO') {
             $data['totalUsers'] = User::count();
             $data['totalCampaigns'] = Campaign::count();
+            $data['totalAgents'] = \App\Models\Employee::count();
             $data['roleDistribution'] = User::selectRaw('role, count(*) as count')->groupBy('role')->get();
         }
 

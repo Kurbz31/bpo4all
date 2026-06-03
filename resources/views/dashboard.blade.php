@@ -83,7 +83,7 @@
             @endif
 
             @if(Auth::user()->role === 'CEO')
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-blue-50 sm:rounded-lg p-6 border border-blue-100">
                         <h3 class="text-lg font-bold text-blue-900 mb-2">Total Workforce</h3>
                         <p class="text-4xl font-extrabold text-blue-700">{{ $data['totalUsers'] }}</p>
@@ -92,6 +92,11 @@
                     <div class="bg-green-50 sm:rounded-lg p-6 border border-green-100">
                         <h3 class="text-lg font-bold text-green-900 mb-2">Total Campaigns</h3>
                         <p class="text-4xl font-extrabold text-green-700">{{ $data['totalCampaigns'] }}</p>
+                    </div>
+
+                    <div class="bg-purple-50 sm:rounded-lg p-6 border border-purple-100">
+                        <h3 class="text-lg font-bold text-purple-900 mb-2">Total Agents</h3>
+                        <p class="text-4xl font-extrabold text-purple-700">{{ $data['totalAgents'] }}</p>
                     </div>
                 </div>
 
