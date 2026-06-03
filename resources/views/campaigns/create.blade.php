@@ -44,13 +44,17 @@
 
                         <div id="call_time_fields" style="display: {{ old('attendance_method') === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'block' : 'none' }};" class="p-4 border rounded-md bg-gray-50 space-y-4">
                             <div>
-                                <x-input-label for="minimum_call_time" :value="__('Minimum Call Time (hours)')" />
+                                <x-input-label for="minimum_call_time">
+                                    {{ __('Minimum Call Time (hours)') }} <span class="text-red-500">*</span>
+                                </x-input-label>
                                 <x-text-input id="minimum_call_time" class="block mt-1 w-full" type="number" name="minimum_call_time" step="0.01" min="0" :value="old('minimum_call_time')" />
                                 <x-input-error :messages="$errors->get('minimum_call_time')" class="mt-2" />
                             </div>
 
                             <div>
-                                <x-input-label for="daily_salary" :value="__('Daily Salary')" />
+                                <x-input-label for="daily_salary">
+                                    {{ __('Daily Salary') }} <span class="text-red-500">*</span>
+                                </x-input-label>
                                 <x-text-input id="daily_salary" class="block mt-1 w-full" type="number" name="daily_salary" step="0.01" min="0" :value="old('daily_salary')" />
                                 <x-input-error :messages="$errors->get('daily_salary')" class="mt-2" />
                             </div>
