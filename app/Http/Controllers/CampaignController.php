@@ -8,15 +8,22 @@ use Illuminate\Validation\Rule;
 
 class CampaignController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
         if ($user->role === 'Team Leader') {
-            $campaigns = $user->campaigns()->with(['employees', 'users'])->paginate(10);
+            $query = $user->campaigns()->with(['employees', 'users']);
         } else {
-            $campaigns = Campaign::with(['employees', 'users'])->paginate(10);
+            $query = Campaign::with(['employees', 'users']);
         }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $campaigns = $query->paginate(10);
 
         return view('campaigns.index', compact('campaigns'));
     }

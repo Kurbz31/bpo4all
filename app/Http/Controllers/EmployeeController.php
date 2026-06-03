@@ -8,19 +8,27 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Employee::with('campaign')
+            ->where('status', '!=', 'terminated');
+
         if (auth()->user()->role === 'Team Leader') {
             $campaignIds = auth()->user()->campaigns()->pluck('campaigns.id');
-            $employees = Employee::with('campaign')
-                ->whereIn('campaign_id', $campaignIds)
-                ->where('status', '!=', 'terminated')
-                ->get();
-        } else {
-            $employees = Employee::with('campaign')
-                ->where('status', '!=', 'terminated')
-                ->get();
+            $query->whereIn('campaign_id', $campaignIds);
         }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('campaign', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $employees = $query->get();
 
         return view('employees.index', compact('employees'));
     }
