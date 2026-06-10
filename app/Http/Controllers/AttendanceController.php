@@ -61,13 +61,9 @@ class AttendanceController extends Controller
             'targets' => 'nullable|array',
         ];
 
-        if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
-            $rules['targets.*.status'] = 'nullable|in:present,absent,late,leave';
-            $rules['targets.*.call_time'] = 'nullable|numeric|min:0';
-            $rules['targets.*.daily_salary'] = 'nullable|numeric|min:0';
-        } else {
-            $rules['targets.*'] = 'nullable|in:present,absent,late,leave';
-        }
+        $rules['targets.*.status'] = 'nullable|in:present,absent,late,leave';
+        $rules['targets.*.call_time'] = 'nullable|numeric|min:0';
+        $rules['targets.*.daily_salary'] = 'nullable|numeric|min:0';
 
         $validated = $request->validate($rules, [
             'date.unique' => 'An attendance record for this date already exists for this campaign.'
@@ -82,21 +78,21 @@ class AttendanceController extends Controller
 
         $filteredTargets = [];
         if (! empty($validated['targets'])) {
-            if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
-                foreach ($validated['targets'] as $id => $data) {
-                    if (!empty($data['status']) || is_numeric($data['call_time']) || is_numeric($data['daily_salary'])) {
-                        $filteredTargets[$id] = [
-                            'status' => $data['status'] ?? null,
-                            'call_time' => $data['call_time'] ?? null,
-                            'daily_salary' => $data['daily_salary'] ?? null,
-                        ];
+            foreach ($validated['targets'] as $id => $data) {
+                // Backward compatibility if an old form submits a string
+                if (!is_array($data)) {
+                    if (!empty($data)) {
+                        $filteredTargets[$id] = ['status' => $data];
                     }
+                    continue;
                 }
-            } else {
-                foreach ($validated['targets'] as $id => $status) {
-                    if (!empty($status)) {
-                        $filteredTargets[$id] = $status;
-                    }
+                
+                if (!empty($data['status']) || is_numeric($data['call_time'] ?? null) || is_numeric($data['daily_salary'] ?? null)) {
+                    $filteredTargets[$id] = [
+                        'status' => $data['status'] ?? null,
+                        'call_time' => $data['call_time'] ?? null,
+                        'daily_salary' => $data['daily_salary'] ?? null,
+                    ];
                 }
             }
         }
@@ -166,13 +162,9 @@ class AttendanceController extends Controller
             'targets' => 'nullable|array',
         ];
 
-        if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
-            $rules['targets.*.status'] = 'nullable|in:present,absent,late,leave';
-            $rules['targets.*.call_time'] = 'nullable|numeric|min:0';
-            $rules['targets.*.daily_salary'] = 'nullable|numeric|min:0';
-        } else {
-            $rules['targets.*'] = 'nullable|in:present,absent,late,leave';
-        }
+        $rules['targets.*.status'] = 'nullable|in:present,absent,late,leave';
+        $rules['targets.*.call_time'] = 'nullable|numeric|min:0';
+        $rules['targets.*.daily_salary'] = 'nullable|numeric|min:0';
 
         $validated = $request->validate($rules, [
             'date.unique' => 'An attendance record for this date already exists for this campaign.'
@@ -180,21 +172,21 @@ class AttendanceController extends Controller
 
         $filteredTargets = [];
         if (! empty($validated['targets'])) {
-            if ($campaign->attendance_method === Campaign::ATTENDANCE_METHOD_CALL_TIME) {
-                foreach ($validated['targets'] as $id => $data) {
-                    if (!empty($data['status']) || is_numeric($data['call_time']) || is_numeric($data['daily_salary'])) {
-                        $filteredTargets[$id] = [
-                            'status' => $data['status'] ?? null,
-                            'call_time' => $data['call_time'] ?? null,
-                            'daily_salary' => $data['daily_salary'] ?? null,
-                        ];
+            foreach ($validated['targets'] as $id => $data) {
+                // Backward compatibility if an old form submits a string
+                if (!is_array($data)) {
+                    if (!empty($data)) {
+                        $filteredTargets[$id] = ['status' => $data];
                     }
+                    continue;
                 }
-            } else {
-                foreach ($validated['targets'] as $id => $status) {
-                    if (!empty($status)) {
-                        $filteredTargets[$id] = $status;
-                    }
+
+                if (!empty($data['status']) || is_numeric($data['call_time'] ?? null) || is_numeric($data['daily_salary'] ?? null)) {
+                    $filteredTargets[$id] = [
+                        'status' => $data['status'] ?? null,
+                        'call_time' => $data['call_time'] ?? null,
+                        'daily_salary' => $data['daily_salary'] ?? null,
+                    ];
                 }
             }
         }

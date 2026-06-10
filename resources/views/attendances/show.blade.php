@@ -38,7 +38,7 @@
                                     </div>
                                     @if($callTime !== null)
                                         <div class="text-xs text-gray-600">
-                                            <span class="font-semibold text-gray-500">Call Time:</span> {{ $callTime }} hrs
+                                            <span class="font-semibold text-gray-500">{{ $campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'Call Time' : 'Hours of Work' }}:</span> {{ $callTime }} hrs
                                         </div>
                                     @endif
                                     @if($dailySalary !== null)
