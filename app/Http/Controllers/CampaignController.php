@@ -50,7 +50,7 @@ class CampaignController extends Controller
             'hours_of_work' => 'nullable|numeric|min:0',
             'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
             'minimum_call_time' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
-            'daily_salary' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
+            'daily_salary' => 'required_with:attendance_method|nullable|numeric|min:0',
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);
@@ -102,7 +102,7 @@ class CampaignController extends Controller
             'hours_of_work' => 'nullable|numeric|min:0',
             'attendance_method' => ['required', Rule::in(array_keys(Campaign::attendanceMethodOptions()))],
             'minimum_call_time' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
-            'daily_salary' => 'required_if:attendance_method,' . Campaign::ATTENDANCE_METHOD_CALL_TIME . '|nullable|numeric|min:0',
+            'daily_salary' => 'required_with:attendance_method|nullable|numeric|min:0',
             'user_ids' => 'nullable|array',
             'user_ids.*' => 'exists:users,id',
         ]);

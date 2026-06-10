@@ -42,10 +42,10 @@
                                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 w-16">#</th>
                                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Agent</th>
                                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
-                                            @if($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME)
-                                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Call Time (Hours)</th>
-                                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Daily Salary</th>
-                                            @endif
+                                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                                {{ $campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'Call Time (Hours)' : 'Hours of Work' }}
+                                            </th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Daily Salary</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 bg-white">
@@ -64,32 +64,20 @@
                                                     <div class="text-xs text-gray-500">Employee ID: {{ $employee->id }}</div>
                                                 </td>
                                                 <td class="px-4 py-3">
-                                                    @if($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME)
-                                                        <select name="targets[{{ $employee->id }}][status]" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                            <option value="" {{ old("targets.{$employee->id}.status", $savedStatus) == '' ? 'selected' : '' }}>-- No mark --</option>
-                                                            <option value="present" {{ old("targets.{$employee->id}.status", $savedStatus) == 'present' ? 'selected' : '' }}>Present</option>
-                                                            <option value="absent" {{ old("targets.{$employee->id}.status", $savedStatus) == 'absent' ? 'selected' : '' }}>Absent</option>
-                                                            <option value="late" {{ old("targets.{$employee->id}.status", $savedStatus) == 'late' ? 'selected' : '' }}>Late</option>
-                                                            <option value="leave" {{ old("targets.{$employee->id}.status", $savedStatus) == 'leave' ? 'selected' : '' }}>On Leave</option>
-                                                        </select>
-                                                    @else
-                                                        <select name="targets[{{ $employee->id }}]" class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                            <option value="" {{ old("targets.{$employee->id}", $savedStatus) == '' ? 'selected' : '' }}>-- No mark --</option>
-                                                            <option value="present" {{ old("targets.{$employee->id}", $savedStatus) == 'present' ? 'selected' : '' }}>Present</option>
-                                                            <option value="absent" {{ old("targets.{$employee->id}", $savedStatus) == 'absent' ? 'selected' : '' }}>Absent</option>
-                                                            <option value="late" {{ old("targets.{$employee->id}", $savedStatus) == 'late' ? 'selected' : '' }}>Late</option>
-                                                            <option value="leave" {{ old("targets.{$employee->id}", $savedStatus) == 'leave' ? 'selected' : '' }}>On Leave</option>
-                                                        </select>
-                                                    @endif
+                                                    <select name="targets[{{ $employee->id }}][status]" class="status-select block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" data-emp-id="{{ $employee->id }}">
+                                                        <option value="" {{ old("targets.{$employee->id}.status", $savedStatus) == '' ? 'selected' : '' }}>-- No mark --</option>
+                                                        <option value="present" {{ old("targets.{$employee->id}.status", $savedStatus) == 'present' ? 'selected' : '' }}>Present</option>
+                                                        <option value="absent" {{ old("targets.{$employee->id}.status", $savedStatus) == 'absent' ? 'selected' : '' }}>Absent</option>
+                                                        <option value="late" {{ old("targets.{$employee->id}.status", $savedStatus) == 'late' ? 'selected' : '' }}>Late</option>
+                                                        <option value="leave" {{ old("targets.{$employee->id}.status", $savedStatus) == 'leave' ? 'selected' : '' }}>On Leave</option>
+                                                    </select>
                                                 </td>
-                                                @if($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME)
-                                                    <td class="px-4 py-3">
-                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][call_time]" value="{{ old('targets.'.$employee->id.'.call_time', $savedCallTime) }}" class="w-full call-time-input" data-emp-id="{{ $employee->id }}" placeholder="7.5" />
-                                                    </td>
-                                                    <td class="px-4 py-3">
-                                                        <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][daily_salary]" value="{{ old('targets.'.$employee->id.'.daily_salary', $savedSalary) }}" class="w-full daily-salary-input" data-emp-id="{{ $employee->id }}" placeholder="500" />
-                                                    </td>
-                                                @endif
+                                                <td class="px-4 py-3">
+                                                    <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][call_time]" value="{{ old('targets.'.$employee->id.'.call_time', $savedCallTime) }}" class="w-full call-time-input" data-emp-id="{{ $employee->id }}" placeholder="{{ $campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_PRESENT_ABSENT ? ($campaign->hours_of_work ?? '8') : ($campaign->minimum_call_time ?? '7.5') }}" />
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <x-text-input type="number" step="0.01" min="0" name="targets[{{ $employee->id }}][daily_salary]" value="{{ old('targets.'.$employee->id.'.daily_salary', $savedSalary) }}" class="w-full daily-salary-input" data-emp-id="{{ $employee->id }}" placeholder="{{ $campaign->daily_salary ?? '500' }}" />
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -134,6 +122,28 @@
                     });
                 });
             }
+        });
+    </script>
+    @elseif($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_PRESENT_ABSENT)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const campaignHours = {{ $campaign->hours_of_work ?? 'null' }};
+            const defaultSalary = {{ $campaign->daily_salary ?? 'null' }};
+
+            const statusSelects = document.querySelectorAll('.status-select');
+            
+            statusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const empId = this.getAttribute('data-emp-id');
+                    const hoursInput = document.querySelector(`.call-time-input[data-emp-id="${empId}"]`);
+                    const salaryInput = document.querySelector(`.daily-salary-input[data-emp-id="${empId}"]`);
+                    
+                    if (this.value === 'present') {
+                        if (hoursInput && campaignHours !== null) hoursInput.value = campaignHours;
+                        if (salaryInput && defaultSalary !== null) salaryInput.value = defaultSalary;
+                    }
+                });
+            });
         });
     </script>
     @endif

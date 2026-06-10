@@ -42,8 +42,8 @@
                             <x-input-error :messages="$errors->get('attendance_method')" class="mt-2" />
                         </div>
 
-                        <div id="call_time_fields" style="display: {{ old('attendance_method') === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'block' : 'none' }};" class="p-4 border rounded-md bg-gray-50 space-y-4">
-                            <div>
+                        <div id="dynamic_fields_container" style="display: {{ old('attendance_method') ? 'block' : 'none' }};" class="p-4 border rounded-md bg-gray-50 space-y-4">
+                            <div id="minimum_call_time_container" style="display: {{ old('attendance_method') === \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME ? 'block' : 'none' }};">
                                 <x-input-label for="minimum_call_time">
                                     {{ __('Minimum Call Time (hours)') }} <span class="text-red-500">*</span>
                                 </x-input-label>
@@ -88,13 +88,23 @@
     <script>
         function toggleCallTimeFields() {
             const method = document.getElementById('attendance_method').value;
-            const fields = document.getElementById('call_time_fields');
-            if (method === '{{ \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME }}') {
-                fields.style.display = 'block';
-                document.getElementById('minimum_call_time').required = true;
+            const container = document.getElementById('dynamic_fields_container');
+            const callTimeContainer = document.getElementById('minimum_call_time_container');
+            
+            if (method) {
+                container.style.display = 'block';
                 document.getElementById('daily_salary').required = true;
+                
+                if (method === '{{ \App\Models\Campaign::ATTENDANCE_METHOD_CALL_TIME }}') {
+                    callTimeContainer.style.display = 'block';
+                    document.getElementById('minimum_call_time').required = true;
+                } else {
+                    callTimeContainer.style.display = 'none';
+                    document.getElementById('minimum_call_time').required = false;
+                    document.getElementById('minimum_call_time').value = '';
+                }
             } else {
-                fields.style.display = 'none';
+                container.style.display = 'none';
                 document.getElementById('minimum_call_time').required = false;
                 document.getElementById('daily_salary').required = false;
                 document.getElementById('minimum_call_time').value = '';
