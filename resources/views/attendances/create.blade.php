@@ -113,6 +113,20 @@
                     });
                 });
             }
+
+            const statusSelects = document.querySelectorAll('.status-select');
+            statusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    if (this.value === 'absent') {
+                        const empId = this.getAttribute('data-emp-id');
+                        const hoursInput = document.querySelector(`.call-time-input[data-emp-id="${empId}"]`);
+                        const salaryInput = document.querySelector(`.daily-salary-input[data-emp-id="${empId}"]`);
+                        
+                        if (hoursInput) hoursInput.value = 0;
+                        if (salaryInput) salaryInput.value = 0;
+                    }
+                });
+            });
         });
     </script>
     @elseif($campaign->attendance_method === \App\Models\Campaign::ATTENDANCE_METHOD_PRESENT_ABSENT)
@@ -132,6 +146,9 @@
                     if (this.value === 'present') {
                         if (hoursInput && campaignHours !== null) hoursInput.value = campaignHours;
                         if (salaryInput && defaultSalary !== null) salaryInput.value = defaultSalary;
+                    } else if (this.value === 'absent') {
+                        if (hoursInput) hoursInput.value = 0;
+                        if (salaryInput) salaryInput.value = 0;
                     }
                 });
             });
