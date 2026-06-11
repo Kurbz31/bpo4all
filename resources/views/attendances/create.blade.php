@@ -132,6 +132,9 @@
                     if (this.value === 'present') {
                         if (hoursInput && campaignHours !== null) hoursInput.value = campaignHours;
                         if (salaryInput && defaultSalary !== null) salaryInput.value = defaultSalary;
+                    } else if (this.value === 'absent') {
+                        if (hoursInput) hoursInput.value = 0;
+                        if (salaryInput) salaryInput.value = 0;
                     }
                 });
             });
