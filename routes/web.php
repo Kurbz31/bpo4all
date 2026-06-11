@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PayrollController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +35,12 @@ Route::middleware('auth')->group(function () {
         Route::put('campaigns/{campaign}/attendance/{attendance}', [\App\Http\Controllers\AttendanceController::class, 'update'])->name('campaigns.attendance.update');
         Route::get('employees/terminated', [EmployeeController::class, 'terminated'])->name('employees.terminated');
         Route::resource('employees', EmployeeController::class);
+        Route::get('payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+        Route::post('payrolls/prepare', [PayrollController::class, 'prepare'])->name('payrolls.prepare');
+        Route::post('payrolls', [PayrollController::class, 'store'])->name('payrolls.store');
+        Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
+        Route::get('payrolls/{payroll}/edit', [PayrollController::class, 'edit'])->name('payrolls.edit');
+        Route::put('payrolls/{payroll}', [PayrollController::class, 'update'])->name('payrolls.update');
     });
 });
 
